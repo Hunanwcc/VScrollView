@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="v_scroll_array">
+        <item>@drawable/icon_daka</item>
+        <item>@drawable/icon_data_jiankong</item>
+        <item>@drawable/icon_dianzan</item>
+        <item>@drawable/icon_more</item>
+        <item>@drawable/icon_page</item>
+        <item>@drawable/icon_tag</item>
+        <item>@drawable/icon_time</item>
+        <item>@drawable/icon_add</item>
+    </integer-array>
+
+</resources>

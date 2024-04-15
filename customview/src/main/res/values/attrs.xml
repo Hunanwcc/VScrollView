@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VScrollView">
+        <!-- item 数目 -->
+        <attr name="itemCounts" format = "integer" />
+
+        <attr name="lastItemPercent" format = "float" />
+        <!-- 背景颜色 -->
+        <attr name="bgColor" format="reference" />
+
+        <attr name="itemWidth" format="dimension"/>
+
+        <attr name="itemHeight" format="dimension"/>
+
+    </declare-styleable>
+
+</resources>
