@@ -46,8 +46,8 @@ publishing {
     publications {
         bar(MavenPublication) {
             groupId 'com.github.Hunanwcc'
-            artifactId 'cn.wcc.customScroll'
-            version     '1.0.3'
+            artifactId 'VScrollView'
+            version     '1.0.4'
         }
     }
 }
