@@ -48,7 +48,7 @@ dependencies {
 
 //    implementation 'com.gitee.HunanWcc:vscroll-view:1.0.1'
 //    implementation 'com.github.Hunanwcc:VScrollView:v1.0.1'
-    implementation 'com.github.Hunanwcc:VScrollView:1.0.4'
+//    implementation 'com.github.Hunanwcc:VScrollView:1.0.4'
 
-//    implementation project(path: ':customview')
+    implementation project(path: ':customview')
 }

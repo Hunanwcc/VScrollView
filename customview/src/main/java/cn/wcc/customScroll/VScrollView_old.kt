@@ -1,7 +1,12 @@
 package cn.wcc.customScroll
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -16,7 +21,7 @@ import java.lang.ref.WeakReference
  * <p>PackagePath: cn.wcc.customScroll     </p>
  * <p>Description：       </p>
  */
-class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int) : View(context, attributes, defStyleAttr),
+class VScrollView_old(context: Context, attributes: AttributeSet?, defStyleAttr: Int) : View(context, attributes, defStyleAttr),
     GestureDetector.OnGestureListener {
 
     constructor(context: Context) : this(context, null, 0)
@@ -42,12 +47,12 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
     }
 
 
-    //点击事件的类型。
+    //点击事件的类型。 unsolder 拆焊 ,互联，检测
     enum class ClickItemType {
-        SETTING, ALERT, CLEAR, PHOTO, VIDEO, GALLERY, H312_1, H312_2
+        SETTING, ALERT, CLEAR, PHOTO, VIDEO, GALLERY, H312_INTERCONNECT, H312_MONITOR
     }
 
-    private val TAG = "VScrollView"
+//    private val TAG = "VScrollView"
 
     private var mContext: WeakReference<Context>? = null
 
@@ -78,7 +83,6 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
     private val mPaint = Paint()
     private var drawItemRectF = RectF()
     private var mScreenFirstItemRectF = RectF()
-
 
     //顶部已滑动长度
     private var mScrollTopLength = 0f
@@ -116,6 +120,18 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
     private fun initItems() {
         items.add(
             VScrollItem(
+                R.mipmap.preview_left_interconnect_unselect, R.mipmap.preview_left_interconnect_select,
+                ClickItemType.H312_INTERCONNECT, itemSelectable = false
+            )
+        )
+        items.add(
+            VScrollItem(
+                R.mipmap.preview_left_monitor_unselect, R.mipmap.preview_left_monitor_select,
+                ClickItemType.H312_MONITOR, itemSelectable = false
+            )
+        )
+        items.add(
+            VScrollItem(
                 R.mipmap.preview_left_setting_unselect,
                 R.mipmap.preview_left_setting_select, ClickItemType.SETTING, itemSelectable = false
             )
@@ -150,22 +166,9 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
                 R.mipmap.preview_left_gallery_select, ClickItemType.GALLERY, itemSelectable = false
             )
         )
-        items.add(
-            VScrollItem(
-                R.drawable.icon_time, R.drawable.icon_add,
-                ClickItemType.H312_1, itemSelectable = false
-            )
-        )
-        items.add(
-            VScrollItem(
-                R.drawable.icon_daka, R.drawable.icon_data_jiankong,
-                ClickItemType.H312_2, itemSelectable = false
-            )
-        )
+
 
     }
-
-    //点击集合,单选
 
     //选中集合.能多选
     private var gestureDetector: GestureDetector
@@ -182,8 +185,6 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
             mItemViewHeight = it.getDimensionPixelSize(R.styleable.VScrollView_itemHeight, mItemViewWidth)
             mBgColor = it.getColor(R.styleable.VScrollView_bgColor, Color.BLUE)
 
-
-            normalBitmaps = mutableListOf()
             for (index in items.indices) {
                 //                        Log.e(TAG, " arrays item ${imageResourceId[index]} ", )
                 normalBitmaps.add(BitmapFactory.decodeResource(mContext!!.get()!!.resources, items[index].normalImageId))
@@ -239,7 +240,6 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
         }
         //计算item 偏移下标
         calculateItemOffsetIndex()
-//        Log.e(TAG, "doScroll: itemOffsetIndex  $itemOffsetIndex")
 
         invalidate()
     }
@@ -291,24 +291,15 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
         }
     }
 
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_UP) {
             if (!mIsEnable) {
                 mEnableCallback?.let { it() }
                 return true
             }
-
-//           runBlocking {
-//               GlobalScope.launch(Dispatchers.Default){
-////               launch {
-//                   delay(200)
-//            Log.e(TAG, "onTouchEvent:  ACTION_UP================= ")
             resetClickItemsState()
             resetTouchCoordinate()
             invalidate()
-//               }
-//           }
         }
         return gestureDetector.onTouchEvent(event)
     }
@@ -318,7 +309,6 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
         touchY = event.y
         invalidate()
         if (!mIsEnable) {
-//            mEnableCallback?.let { it() }
             return true
         }
 
@@ -380,9 +370,6 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
     }
 
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-//       if (inItemRange(e1?.x, e1?.y)) {
-//
-//       }
 //        Log.e(TAG, "onScroll: X${e1?.x} Y${e1?.y}   X${e2.x} Y${e2.y} distanceX:$distanceX ,distanceY:$distanceY")
         lastTouchY = e2.y
         //do render
@@ -403,13 +390,12 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        mViewScreenWidth = View.MeasureSpec.getSize(widthMeasureSpec)
-        mViewScreenHeight = View.MeasureSpec.getSize(heightMeasureSpec)
+        mViewScreenWidth = MeasureSpec.getSize(widthMeasureSpec)
+        mViewScreenHeight = MeasureSpec.getSize(heightMeasureSpec)
 
         setMeasuredDimension(mViewScreenWidth, mViewScreenHeight)
 
         initItemParams()
-
     }
 
     /**
@@ -447,7 +433,7 @@ class VScrollView(context: Context, attributes: AttributeSet?, defStyleAttr: Int
 
     //calculate next item rect
     private fun calculateNextDrawItemRect() {
-        drawItemRectF.top = drawItemRectF.top + mItemViewHeight + itemIntervalPixels
+        drawItemRectF.top += mItemViewHeight + itemIntervalPixels
         drawItemRectF.bottom = drawItemRectF.top + mItemViewHeight
     }
 
